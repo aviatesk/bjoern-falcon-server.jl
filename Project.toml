@@ -1,13 +1,20 @@
-name = "PyCallServer"
+name = "ImpureServer"
 uuid = "6596fe81-5fa5-49a1-acfc-f6f29cebc986"
 authors = ["Shuhei Kadowaki"]
-version = "0.1.0"
+version = "0.0.0"
 
-[compat]
-julia = "1.5"
+[deps]
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 
 [extras]
+Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+build = ["Conda", "Pkg"]
+test = ["HTTP", "Sockets", "Test"]

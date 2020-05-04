@@ -1,2 +1,3 @@
 .DS_Store
-/dev/
+deps/build.log
+!Manifest.toml
