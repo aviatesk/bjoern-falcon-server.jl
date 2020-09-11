@@ -1,5 +1,5 @@
 using Test, HTTP, JSON, Sockets
-using ImpureServer: @js
+using bjoernfalconserver: @js
 
 
 function test_server(host, port)

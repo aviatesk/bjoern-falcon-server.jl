@@ -1,8 +1,8 @@
 impure but fast Julia API server
 
 ```julia
-pkg> dev https://github.com/aviatesk/ImpureServer.jl
-julia> using ImpureServer
+pkg> dev https://github.com/aviatesk/bjoern-falcon-server.jl
+julia> using bjoernfalconserver
 julia> boot_server("localhost", 8000)
 ```
 

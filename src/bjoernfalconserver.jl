@@ -1,40 +1,27 @@
-module ImpureServer
+module bjoernfalconserver
 
 
-using JSON, MacroTools, PyCall
+using JSON, PyCall
 
 # API body
 # --------
 
-"""
-    @js ex
-
-Constructs JSON `String` from JS-like syntax.
-"""
-macro js(ex)
-    (ex isa Symbol || @capture(ex, k_:v_)) && (ex = Expr(:tuple, ex))
-    @assert isexpr(ex, :tuple, :braces)
-    k2vmap = map(ex.args) do x
-        x isa Symbol && return (x, x)
-        @assert @capture(x, k_:v_)
-        return (k, v)
-    end
-    ex = esc(Expr(:tuple, map(((k,v),)->:($k=$v), k2vmap)...))
-    ex = MacroTools.postwalk(x -> x === :null ? nothing : x, ex)
-    return :(JSON.json($ex))
-end
-
 function ping_handler(data)
-    @info "ping_handler: got $data"
-    return isempty(data) ? "pong" : @js { data }
+    @info "ping_handler: got " data
+    return JSON.json(isempty(data) ? "pong" : (; data))
 end
 
-# give up to Python
-# -----------------
+# entry point
+# -----------
 
 isdefined′(syms...) = all((isdefined(@__MODULE__, sym) for sym in syms))
 
-function give_up_to_python(host::AbstractString, port::Integer)
+# TODO
+# - async initialization ?
+# - distribute processes (listening on the same port) ?
+function boot_server(host::AbstractString = get(ENV, "PYCALLSERVER_HOST", "0.0.0.0"),
+                     port::Integer = parse(Int, get(ENV, "PYCALLSERVER_PORT", "8000"))
+                     )
     @assert isdefined′(
         :ping_handler,
         # other handlers will come here ...
@@ -78,16 +65,6 @@ function give_up_to_python(host::AbstractString, port::Integer)
     bjoern.run(wsgi_app = app, host = $host, port = $port)
     """
 end
-
-# entry point
-# -----------
-
-# TODO:
-# - async initialize ?
-# - distribute process listening on the same port ?
-boot_server(host = get(ENV, "PYCALLSERVER_HOST", "0.0.0.0"), port = parse(Int, get(ENV, "PYCALLSERVER_PORT", "8000"))) =
-    give_up_to_python(host, port)
-
 
 export  boot_server
 
